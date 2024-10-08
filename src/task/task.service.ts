@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
   HttpException,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { TaskDto } from './task.dto';
 
@@ -38,6 +40,20 @@ export class TaskService {
 
     throw new HttpException(
       `O id ${task.id}, não foi encontrado na base de dados.`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  remove(id: string) {
+    let taskIndex = this.tasks.findIndex((t) => t.id === id);
+
+    if (taskIndex >= 0) {
+      this.tasks.splice(taskIndex, 1);
+      return;
+    }
+
+    throw new HttpException(
+      `O id ${id}, não foi encontrado na base de dados.`,
       HttpStatus.BAD_REQUEST,
     );
   }
