@@ -27,4 +27,18 @@ export class TaskService {
       HttpStatus.NOT_FOUND,
     );
   }
+
+  update(task: TaskDto) {
+    let taskIndex = this.tasks.findIndex((t) => t.id === task.id);
+
+    if (taskIndex >= 0) {
+      this.tasks[taskIndex] = task;
+      return;
+    }
+
+    throw new HttpException(
+      `O id ${task.id}, não foi encontrado na base de dados.`,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
 }
