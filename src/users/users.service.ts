@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserDto } from './user.Dto';
+import { UserDto } from './user.dto';
 import { v4 as uuid } from 'uuid';
 import { hashSync as bcryptHashSync } from 'bcryptjs';
 
@@ -11,6 +11,9 @@ export class UsersService {
     newUser.id = uuid();
     newUser.password = bcryptHashSync(newUser.password, 10);
     this.users.push(newUser);
-    console.log(this.users);
+  }
+
+  findByUserName(username: string): UserDto | null {
+    return this.users.find((u) => u.username === username);
   }
 }
