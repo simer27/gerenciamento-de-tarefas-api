@@ -71,18 +71,15 @@ export class TaskService {
     await this.taskRepository.update(id, this.mapDtoToEntity(task));
   }
 
-  remove(id: string) {
-    let taskIndex = this.tasks.findIndex((t) => t.id === id);
+  async remove(id: string) {
+    const result = await this.taskRepository.delete(id);
 
-    if (taskIndex >= 0) {
-      this.tasks.splice(taskIndex, 1);
-      return;
+    if (!result.affected) {
+      throw new HttpException(
+        `O id ${id}, não foi encontrado na base de dados.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-
-    throw new HttpException(
-      `O id ${id}, não foi encontrado na base de dados.`,
-      HttpStatus.BAD_REQUEST,
-    );
   }
 
   private mapEntityToDto(taskEntity: TaskEntity): TaskDto {
