@@ -58,18 +58,17 @@ export class TaskService {
     return tasksFound.map((taskEntity) => this.mapEntityToDto(taskEntity));
   }
 
-  update(task: TaskDto) {
-    let taskIndex = this.tasks.findIndex((t) => t.id === task.id);
+  async update(id: string, task: TaskDto) {
+    const foundTask = await this.taskRepository.findOne({ where: { id } });
 
-    if (taskIndex >= 0) {
-      this.tasks[taskIndex] = task;
-      return;
+    if (!foundTask) {
+      throw new HttpException(
+        `O id ${task.id}, não foi encontrado na base de dados.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    throw new HttpException(
-      `O id ${task.id}, não foi encontrado na base de dados.`,
-      HttpStatus.BAD_REQUEST,
-    );
+    await this.taskRepository.update(id, this.mapDtoToEntity(task));
   }
 
   remove(id: string) {
@@ -93,6 +92,15 @@ export class TaskService {
       description: taskEntity.description,
       expirationDate: taskEntity.expirationDate,
       status: TaskStatusEnum[taskEntity.status],
+    };
+  }
+
+  private mapDtoToEntity(taskDto: TaskDto): Partial<TaskEntity> {
+    return {
+      title: taskDto.title,
+      description: taskDto.description,
+      expirationDate: taskDto.expirationDate,
+      status: taskDto.status.toString(),
     };
   }
 }
