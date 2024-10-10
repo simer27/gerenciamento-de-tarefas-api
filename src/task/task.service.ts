@@ -28,17 +28,16 @@ export class TaskService {
     return this.mapEntityToDto(createdTask);
   }
 
-  findById(id: string): TaskDto {
-    const foundTask = this.tasks.filter((t) => t.id === id);
+  async findById(id: string): Promise<TaskDto> {
+    const foundTask = await this.taskRepository.findOne({ where: { id } });
 
-    if (foundTask.length) {
-      return foundTask[0];
+    if (!foundTask) {
+      throw new HttpException(
+        `O id ${id}, não foi encontrado na base de dados.`,
+        HttpStatus.NOT_FOUND,
+      );
     }
-
-    throw new HttpException(
-      `O id ${id}, não foi encontrado na base de dados.`,
-      HttpStatus.NOT_FOUND,
-    );
+    return this.mapEntityToDto(foundTask);
   }
 
   findAll(params: FindAllParameters): TaskDto[] {

@@ -19,13 +19,13 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  async create(@Body() task: TaskDto) {
-    await this.taskService.create(task);
+  async create(@Body() task: TaskDto): Promise<TaskDto> {
+    return await this.taskService.create(task);
   }
 
   @Get('/:id')
-  findById(@Param('id') id: string): TaskDto {
-    return this.taskService.findById(id);
+  async findById(@Param('id') id: string): Promise<TaskDto> {
+    return await this.taskService.findById(id);
   }
 
   @Get()
